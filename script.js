@@ -70,11 +70,18 @@
     if (data['Note']) {
       throw new Error('Alpha Vantage rate limit reached. Please wait and try again.');
     }
+    if (data['Information']) {
+      throw new Error(String(data['Information']));
+    }
     if (data['Error Message']) {
       throw new Error('Invalid symbol or request.');
     }
+    if (data['bestMatches']) {
+      throw new Error('Symbol search returned suggestions, not prices. Try a specific ticker.');
+    }
     if (!data['Time Series (Daily)']) {
-      throw new Error('Unexpected API response.');
+      const keys = Object.keys(data || {}).join(', ');
+      throw new Error(`Unexpected API response. Keys: ${keys || 'none'}`);
     }
 
     const meta = data['Meta Data'];
