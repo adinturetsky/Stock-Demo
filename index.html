@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock Prediction Game</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Stock Market Prediction Game</h1>
+      <p class="subtitle">Guess if tomorrow's price will go up or down.</p>
+    </header>
+
+    <section class="ticker-section">
+      <form id="tickerForm" autocomplete="off">
+        <label for="tickerInput">Enter a stock ticker (e.g., MSFT, COF):</label>
+        <div class="ticker-row">
+          <input id="tickerInput" name="ticker" type="text" placeholder="AAPL" required>
+          <button id="loadBtn" type="submit">Load</button>
+        </div>
+      </form>
+      <div id="status" class="status" aria-live="polite"></div>
+    </section>
+
+    <section class="info-bar" aria-live="polite">
+      <div><strong>Ticker:</strong> <span id="currentTicker">—</span></div>
+      <div><strong>Starting date:</strong> <span id="startingDate">—</span></div>
+      <div><strong>Current date:</strong> <span id="currentDate">—</span></div>
+      <div><strong>Score:</strong> <span id="score">0</span></div>
+    </section>
+
+    <section class="chart-section">
+      <canvas id="priceChart" height="220"></canvas>
+    </section>
+
+    <section class="controls">
+      <button id="guessUp" disabled>Predict Up</button>
+      <button id="guessDown" disabled>Predict Down</button>
+      <button id="restart" class="secondary" disabled>End Game / Restart</button>
+    </section>
+
+    <footer>
+      <p>Data by Alpha Vantage. Prices shown are historical daily closes. This game is for educational purposes only.</p>
+    </footer>
+  </div>
+
+  <script src="./script.js"></script>
+  
+</body>
+</html>
+
