@@ -62,19 +62,28 @@
    * Alpha Vantage
    */
   async function fetchDailySeries(ticker) {
-    const url = `${AV_BASE}?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${encodeURIComponent(ticker)}&outputsize=full&apikey=${API_KEY}`;
+    const url = `${AV_BASE}?function=TIME_SERIES_DAILY&symbol=${encodeURIComponent(ticker)}&outputsize=compact&apikey=${API_KEY}`;
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Network error: ${res.status}`);
-    const data = await res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      throw new Error('Failed to parse API response.');
+    }
 
     if (data['Note']) {
       throw new Error('Alpha Vantage rate limit reached. Please wait and try again.');
     }
+    if (data['Information']) {
+      throw new Error(String(data['Information']));
+    }
     if (data['Error Message']) {
-      throw new Error('Invalid symbol or request.');
+      throw new Error('Ticker not found or invalid request.');
     }
     if (!data['Time Series (Daily)']) {
-      throw new Error('Unexpected API response.');
+      const keys = Object.keys(data || {}).join(', ');
+      throw new Error(`Unexpected API response. Keys: ${keys || 'none'}`);
     }
 
     const meta = data['Meta Data'];
@@ -82,11 +91,10 @@
     const entries = Object.entries(series)
       .map(([date, o]) => ({
         date,
-        close: Number(o['5. adjusted close'] ?? o['4. close'])
+        close: Number(o['4. close'])
       }))
       .filter(p => Number.isFinite(p.close))
-      .sort((a, b) => new Date(a.date) - new Date(b.date)); // ascending
-
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
     return { meta, entries };
   }
 
